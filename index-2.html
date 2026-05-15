@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>wilted stars</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inconsolata:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #080807;
+    --surface: #0f0e0c;
+    --line: rgba(255,255,255,0.06);
+    --dim: #4a4640;
+    --mid: #7a7268;
+    --pale: #b8b0a4;
+    --light: #e2d8cc;
+    --accent: #6b4c3b;
+    --accent2: #8a6a4a;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--pale);
+    font-family: 'Libre Baskerville', Georgia, serif;
+    min-height: 100vh;
+    cursor: crosshair;
+  }
+
+  /* noise */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* layout */
+  .wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 0 60px;
+    position: relative;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -28px; right: -28px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.4;
+  }
+
+  .channel-tag {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    font-weight: 300;
+    letter-spacing: 0.35em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 48px;
+    animation: appear 1.2s ease both;
+  }
+
+  .hero-title {
+    font-size: clamp(36px, 8vw, 72px);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--light);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin-bottom: 32px;
+    animation: appear 1.2s 0.15s ease both;
+  }
+
+  .hero-title span {
+    display: block;
+    font-style: normal;
+    font-size: 0.45em;
+    letter-spacing: 0.2em;
+    color: var(--dim);
+    font-family: 'Inconsolata', monospace;
+    font-weight: 300;
+    margin-top: 16px;
+    text-transform: uppercase;
+  }
+
+  .hero-desc {
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--mid);
+    max-width: 420px;
+    font-style: italic;
+    animation: appear 1.2s 0.3s ease both;
+    border-left: 1px solid var(--accent);
+    padding-left: 20px;
+    margin-bottom: 60px;
+  }
+
+  .hero-meta {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--dim);
+    letter-spacing: 0.2em;
+    animation: appear 1.2s 0.45s ease both;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: var(--dim);
+    text-transform: uppercase;
+    animation: appear 1.2s 0.8s ease both, drift 3s 2s ease-in-out infinite;
+  }
+
+  @keyframes drift {
+    0%, 100% { transform: translateY(0); opacity: 0.4; }
+    50% { transform: translateY(6px); opacity: 0.8; }
+  }
+
+  /* ── DIVIDER ── */
+  .rule {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 0;
+  }
+
+  /* ── SECTION ── */
+  section {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .section-index {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.5em;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 48px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .section-index::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  /* ── QUOTES ── */
+  .quote-list { display: grid; gap: 0; }
+
+  .quote-item {
+    padding: 36px 0;
+    border-bottom: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 0 24px;
+    cursor: pointer;
+    transition: background 0.2s;
+    position: relative;
+  }
+
+  .quote-item:first-child { border-top: 1px solid var(--line); }
+
+  .quote-item:hover { background: rgba(255,255,255,0.015); }
+  .quote-item:hover .q-num { color: var(--accent2); }
+
+  .q-num {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--dim);
+    padding-top: 4px;
+    transition: color 0.2s;
+    user-select: none;
+  }
+
+  .q-body { }
+
+  .q-text {
+    font-size: 16px;
+    font-style: italic;
+    line-height: 1.75;
+    color: var(--pale);
+    margin-bottom: 16px;
+    transition: color 0.2s;
+  }
+
+  .quote-item:hover .q-text { color: var(--light); }
+
+  .q-copy-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .q-source {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.25em;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  .q-copy-btn {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    color: var(--dim);
+    text-transform: uppercase;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color 0.2s;
+  }
+
+  .q-copy-btn:hover { color: var(--pale); }
+  .q-copy-btn.done { color: var(--accent2); }
+
+  /* ── CHANNEL INFO ── */
+  .info-grid {
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+
+  .info-row {
+    background: var(--surface);
+    padding: 24px 28px;
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  .info-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.35em;
+    color: var(--dim);
+    text-transform: uppercase;
+    padding-top: 2px;
+  }
+
+  .info-value {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--pale);
+  }
+
+  .info-value.mono {
+    font-family: 'Inconsolata', monospace;
+    font-weight: 300;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+  }
+
+  .copy-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .inline-copy {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    font-weight: 300;
+    letter-spacing: 0.4em;
+    color: var(--dim);
+    text-transform: uppercase;
+    background: none;
+    border: 1px solid var(--line);
+    cursor: pointer;
+    padding: 5px 10px;
+    white-space: nowrap;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .inline-copy:hover {
+    border-color: var(--accent);
+    color: var(--pale);
+  }
+
+  .inline-copy.done {
+    border-color: var(--accent2);
+    color: var(--accent2);
+  }
+
+  /* ── SCHEDULE ── */
+  .schedule-list { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+
+  .schedule-row {
+    background: var(--surface);
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 0;
+  }
+
+  .sch-time {
+    font-family: 'Inconsolata', monospace;
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--accent2);
+    letter-spacing: 0.1em;
+    padding: 20px 24px;
+    border-right: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+  }
+
+  .sch-desc {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--mid);
+    padding: 20px 24px;
+    font-style: italic;
+  }
+
+  /* ── HASHTAGS ── */
+  .tag-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .tag {
+    font-family: 'Inconsolata', monospace;
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--mid);
+    letter-spacing: 0.05em;
+    padding: 5px 12px;
+    border: 1px solid var(--line);
+    cursor: default;
+    transition: all 0.15s;
+  }
+
+  .tag:hover {
+    border-color: var(--accent);
+    color: var(--pale);
+  }
+
+  .tag.primary {
+    border-color: rgba(107, 76, 59, 0.4);
+    color: var(--pale);
+  }
+
+  .copy-all-btn {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.4em;
+    color: var(--dim);
+    text-transform: uppercase;
+    background: none;
+    border: 1px solid var(--line);
+    cursor: pointer;
+    padding: 8px 20px;
+    transition: all 0.2s;
+  }
+
+  .copy-all-btn:hover { border-color: var(--accent); color: var(--pale); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 60px 0 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .footer-name {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--dim);
+  }
+
+  .footer-meta {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.35em;
+    color: var(--dim);
+    text-transform: uppercase;
+    text-align: right;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    color: var(--pale);
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.25s ease;
+    pointer-events: none;
+    z-index: 9998;
+  }
+
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes appear {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 480px) {
+    .info-row { grid-template-columns: 1fr; gap: 8px; }
+    .schedule-row { grid-template-columns: 80px 1fr; }
+    footer { flex-direction: column; gap: 16px; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="channel-tag">telegram channel · dark poetry</div>
+    <h1 class="hero-title">
+      wilted stars
+      <span>est. 2026 · @dFredrinn</span>
+    </h1>
+    <p class="hero-desc">
+      for those who sit with things instead of fixing them.<br>
+      no comfort here. just the words you couldn't say.
+    </p>
+    <div class="hero-meta">quotes · poetry · darkness · 00:00</div>
+    <div class="scroll-hint">scroll</div>
+  </div>
+
+  <!-- QUOTES -->
+  <section>
+    <div class="section-index reveal">01 — Quotes</div>
+    <div class="quote-list" id="quoteList"></div>
+  </section>
+
+  <!-- CHANNEL INFO -->
+  <section>
+    <div class="section-index reveal">02 — Channel Info</div>
+
+    <div class="info-grid reveal">
+      <div class="info-row">
+        <div class="info-label">Name</div>
+        <div class="copy-row">
+          <div class="info-value mono">𝔴𝔦𝔩𝔱𝔢𝔡 𝔰𝔱𝔞𝔯𝔰 ✦</div>
+          <button class="inline-copy" onclick="cp('𝔴𝔦𝔩𝔱𝔢𝔡 𝔰𝔱𝔞𝔯𝔰 ✦', this)">copy</button>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Bio</div>
+        <div class="copy-row">
+          <div class="info-value" style="font-style:italic; font-size:13px; line-height:1.8;">
+            for those who find beauty in broken things.<br>
+            <span style="font-family:'Inconsolata',monospace; font-size:12px; letter-spacing:0.1em; color:var(--dim);">quotes · poetry · darkness</span><br>
+            stay, or don't. the void remains.
+          </div>
+          <button class="inline-copy" onclick="cp('for those who find beauty in broken things.\n\nquotes · poetry · darkness\n\nstay, or don\'t. the void remains.', this)">copy</button>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Pinned Post</div>
+        <div class="copy-row">
+          <div class="info-value" style="font-style:italic; font-size:13px; line-height:1.9;">
+            𝔴𝔢𝔩𝔠𝔬𝔪𝔢 𝔱𝔬 𝔱𝔥𝔢 𝔡𝔞𝔯𝔨.<br><br>
+            this is not a place to heal.<br>
+            this is a place to feel.<br><br>
+            every night we sit here —<br>
+            between words that never finish<br>
+            and wounds that don't need names.<br><br>
+            ── ✦ ──
+          </div>
+          <button class="inline-copy" onclick="cp('𝔴𝔢𝔩𝔠𝔬𝔪𝔢 𝔱𝔬 𝔱𝔥𝔢 𝔡𝔞𝔯𝔨.\n\nthis is not a place to heal.\nthis is a place to feel.\n\nevery night we sit here —\nbetween words that never finish\nand wounds that don\'t need names.\n\n── ✦ ──', this)">copy</button>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Caption Format</div>
+        <div class="copy-row">
+          <div class="info-value mono" style="font-size:12px; line-height:1.9; color:var(--mid);">
+            [your quote here]<br>
+            [2–4 lines max]<br><br>
+            — [author / anon]<br><br>
+            ✦ ──────── ✦<br><br>
+            #darkquotes #voidpoetry
+          </div>
+          <button class="inline-copy" onclick="cp('[your quote here]\n[2–4 lines max]\n\n— [author / anon]\n\n✦ ──────── ✦\n\n#darkquotes #voidpoetry', this)">copy</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCHEDULE -->
+  <section>
+    <div class="section-index reveal">03 — Posting Schedule</div>
+    <div class="schedule-list reveal">
+      <div class="schedule-row">
+        <div class="sch-time">06:30</div>
+        <div class="sch-desc">One line. Heavy but quiet. For the ones who wake up already tired.</div>
+      </div>
+      <div class="schedule-row">
+        <div class="sch-time">14:00</div>
+        <div class="sch-desc">A short poem or quote pulled from dark literature or film.</div>
+      </div>
+      <div class="schedule-row">
+        <div class="sch-time">21:00</div>
+        <div class="sch-desc">The longest post. Original poetry or a piece of dark prose.</div>
+      </div>
+      <div class="schedule-row">
+        <div class="sch-time">00:00</div>
+        <div class="sch-desc">One sentence. No context. Let them sit with it.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HASHTAGS -->
+  <section>
+    <div class="section-index reveal">04 — Hashtags</div>
+    <div class="tag-wrap reveal">
+      <span class="tag primary">#darkquotes</span>
+      <span class="tag primary">#aestheticquotes</span>
+      <span class="tag primary">#voidpoetry</span>
+      <span class="tag primary">#darkpoetry</span>
+      <span class="tag">#moodygram</span>
+      <span class="tag">#shadowaesthetic</span>
+      <span class="tag">#noirvibes</span>
+      <span class="tag">#brokenpoetry</span>
+      <span class="tag">#midnightthoughts</span>
+      <span class="tag">#sadaesthetic</span>
+      <span class="tag">#gothicquotes</span>
+      <span class="tag">#darkaesthetic</span>
+      <span class="tag">#poetrylovers</span>
+      <span class="tag">#lonelypoetry</span>
+      <span class="tag">#silentscreaming</span>
+      <span class="tag">#darkwritersociety</span>
+      <span class="tag">#writersofdarkness</span>
+      <span class="tag">#hauntedpoetry</span>
+      <span class="tag">#witchyvibes</span>
+    </div>
+    <button class="copy-all-btn reveal" onclick="copyAllTags()">copy all tags</button>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="reveal">
+    <div class="footer-name">wilted stars ✦</div>
+    <div class="footer-meta">dark poetry · telegram<br>@dFredrinn</div>
+  </footer>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const quotes = [
+    {
+      text: "some people leave\nnot because they stopped loving you.\nbut because explaining their exhaustion\nbecame more work than staying.",
+    },
+    {
+      text: "tonight carries the weight\nof a name i haven't spoken aloud\nin longer than i care to count.",
+    },
+    {
+      text: "i'm not afraid of the dark.\ni'm afraid of how long i've been in it\nwithout noticing.",
+    },
+    {
+      text: "everyone leaves eventually.\nthe only difference\nis how much warning they give.",
+    },
+    {
+      text: "you know you've lost someone\nwhen you stop saving things to tell them.",
+    },
+    {
+      text: "there is a particular kind of loneliness\nthat lives in rooms full of people\nwho think they know you.",
+    },
+    {
+      text: "i write about pain\nnot to be understood —\nbut to confirm\nthat something actually happened.",
+    },
+    {
+      text: "silence is not always peace.\nsometimes it's the sound\nof running out of ways to explain yourself.",
+    },
+    {
+      text: "the worst part isn't that you left.\nit's that i kept returning\nto a door i already knew was closed.",
+    },
+    {
+      text: "grief doesn't knock.\nit arrives at odd hours\nand makes itself at home\nlike it never left.",
+    },
+  ];
+
+  const list = document.getElementById('quoteList');
+  quotes.forEach((q, i) => {
+    const el = document.createElement('div');
+    el.className = 'quote-item reveal';
+    el.style.transitionDelay = `${i * 0.04}s`;
+    const num = String(i + 1).padStart(2, '0');
+    el.innerHTML = `
+      <div class="q-num">${num}</div>
+      <div class="q-body">
+        <div class="q-text">${q.text.replace(/\n/g, '<br>')}</div>
+        <div class="q-copy-row">
+          <div class="q-source">original</div>
+          <button class="q-copy-btn" onclick="cp(\`${q.text.replace(/`/g, '\\`')}\`, this)">copy</button>
+        </div>
+      </div>
+    `;
+    list.appendChild(el);
+  });
+
+  // scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._t);
+    t._t = setTimeout(() => t.classList.remove('show'), 1600);
+  }
+
+  function cp(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'done';
+      btn.classList.add('done');
+      toast('copied');
+      setTimeout(() => { btn.textContent = orig; btn.classList.remove('done'); }, 1600);
+    });
+  }
+
+  function copyAllTags() {
+    const tags = [...document.querySelectorAll('.tag')].map(t => t.textContent).join(' ');
+    navigator.clipboard.writeText(tags).then(() => toast('all tags copied'));
+  }
+</script>
+</body>
+</html>
